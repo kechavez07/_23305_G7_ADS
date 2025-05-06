@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Especialistas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.9rem;
+            display: none;
+            margin-top: 5px;
+        }
+        :root {
+      --color-selected:      #4CAF50;
+      --color-preselected:   #FF5252;
+      --sidebar-bg:          #2C3E50;
+      --dashboard-btn:       #34495E;
+      --dashboard-active:    #3498DB;
+      --btn-primary-content: #2980B9;
+      --btn-success-main:    #27AE60;
+      --text-primary:        #2C3E50;
+      --text-secondary:      #7F8C8D;
+    }
+    .sidebar {
+      background-color:#2C3E50 !important;
+    }
+    .sidebar-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-header img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-link {
+      color: #ECF0F1 !important;
+      padding: 0.8rem 1.5rem !important;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .nav-link:hover {
+      background: var(--dashboard-active) !important;
+      transform: translateX(8px);
+    }
+
+    .nav-link.active {
+      background: var(--dashboard-active) !important;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .section-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--dashboard-active);
+    }
+     /* Estilos para el mensaje sin resultados */
+     #noResults {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #f8f9fa;
+      padding: 2rem 3rem;
+      border: 2px solid var(--dashboard-active);
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1050;
+    }
+
+    #noResults h2 {
+      font-size: 2rem;
+      color: var(--dashboard-active);
+      text-align: center;
+      margin: 0;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Barra lateral -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse" style="position: fixed; top: 0; bottom: 0; left: 0; height: 100vh; padding-top: 20px; background-color: #f8f9fa;">
+                <div class="sidebar-header">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRByXdlFL7j91LhNlOH684Rj3oPVBLUuGbJA&s" 
+                         alt="Logo" class="img-fluid">
+                    <h4 class="text-white mt-3 mb-0">Fundación Carlitos</h4>
+                    <small class="text-muted">Gestion del Especialista</small>
+                  </div>
+                  <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="verificarPagoActAdmin.html">
+                          <i class="fas fa-university"></i>
+                          Verificar Pagos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link active" href="#">
+                        <i class="fas fa-tasks"></i>
+                        Gestionar Especialistas
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="gestionarEspecialidadesActAdmin.html">
+                        <i class="fas fa-cogs"></i>
+                        Gestionar Especialidades
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="gestionarReportesActAdmin.html">
+                        <i class="fas fa-chart-bar"></i>
+                        Generar reportes
+                      </a>
+                    </li>
+                  </ul>
+            </nav>
+            
+            <!-- Modal para agregar o editar especialista -->
+            <div class="modal fade" id="specialistModal" tabindex="-1" aria-labelledby="specialistModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="specialistModalLabel">Agregar/Editar Especialista</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="specialistForm">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Nombre Completo *</label>
+                                    <input type="text" class="form-control" id="name" required>
+                                    <div id="nameError" class="error-message">El nombre solo puede contener letras y espacios.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Número de Teléfono *</label>
+                                    <input type="text" class="form-control" id="phone" required>
+                                    <div id="phoneError" class="error-message">El número debe ser un teléfono móvil válido (09xxxxxxxx).</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Correo Electrónico *</label>
+                                    <input type="email" class="form-control" id="email" required>
+                                    <div id="emailError" class="error-message">El correo electrónico no es válido.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">Título *</label>
+                                    <input type="text" class="form-control" id="title" required>
+                                    <div id="titleError" class="error-message">El título solo puede contener letras y espacios.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="area" class="form-label">Especialidad *</label>
+                                    <input type="text" class="form-control" id="area" required>
+                                    <div id="areaError" class="error-message">El área solo puede contener letras y espacios.</div>
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="saveSpecialist()">Guardar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <!-- Contenido principal -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <h1 class="mt-4">Gestionar Especialistas</h1>
+                <br>
+               
+                <!-- Fila con el botón y la barra de búsqueda -->
+                <div class="row mb-3">
+                    <div class="col-auto ">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Buscar especialista..." onkeyup="searchSpecialist()">
+                    </div>
+                    <div class="col-auto ms-auto">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#specialistModal" onclick="clearForm()">Agregar Especialista</button>
+                    </div>
+                    <!-- Columna ajustada a la derecha con menos ancho -->
+                   
+                </div>
+                <br>
+                <!-- Tabla de especialistas -->
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nombre Completo</th>
+                                <th>Número de Teléfono</th>
+                                <th>Correo Electrónico</th>
+                                <th>Título</th>
+                                <th>Especialidad</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="specialistTable">
+                            <!-- Datos dinámicos aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+    <!-- Agrega este modal antes del cierre del body -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar este especialista?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="noResults">
+        <h2>No se encuentran especialistas con el nombre ingresado</h2>
+      </div>
+    <script>
+        let deleteIndex = null; // Variable para almacenar el índice a eliminar
+
+// Función para abrir el modal de confirmación
+function deleteSpecialist(index) {
+    deleteIndex = index;
+    const deleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+    deleteModal.show();
+}
+
+// Función para confirmar la eliminación
+function confirmDelete() {
+    if (deleteIndex !== null) {
+        specialists.splice(deleteIndex, 1);
+        updateTable();
+        deleteIndex = null;
+        
+        // Cerrar el modal
+        const deleteModal = bootstrap.Modal.getInstance(document.getElementById('confirmDeleteModal'));
+        deleteModal.hide();
+        
+        // Mostrar mensaje de confirmación
+        alert("Especialista eliminado correctamente.");
+    }
+}
+
+    
+        // Función para buscar especialistas
+        function searchSpecialist() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const rows = document.querySelectorAll('#specialistTable tr');
+      let visibleCount = 0;
+      rows.forEach(row => {
+        const cells = row.getElementsByTagName('td');
+        let found = false;
+        for (let i = 0; i < cells.length - 1; i++) {
+          if (cells[i].innerText.toLowerCase().includes(input)) {
+            found = true;
+            break;
+          }
+        }
+        if (found) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+      // Mostrar mensaje si no hay registros visibles y se ingresó un término de búsqueda
+      if (visibleCount === 0 && input.trim() !== "") {
+        document.getElementById('noResults').style.display = 'block';
+      } else {
+        document.getElementById('noResults').style.display = 'none';
+      }
+    }
+
+        // Función para limpiar el formulario (puedes implementarla según tus necesidades)
+        function clearForm() {
+            document.getElementById("specialistForm").reset();
+        }
+  
+
+    
+        let specialists = [
+            { name: "Juan Perez", phone: "0987654321", email: "juan@gmail.com", title: "Enfermero", area: "Pediatria" },
+            { name: "Maria Lopez", phone: "0998765432", email: "maria@gmail.com", title: "Medico Osteopata", area: "Medicina General" },
+            { name: "Carlos Garcia", phone: "0976543210", email: "carlos@gmail.com", title: "Medico Cirujano", area: "Pediatria" }
+        ];
+    
+        let editingIndex = null; // Variable global para almacenar el índice de edición
+    
+        window.onload = updateTable;
+    
+        document.getElementById("name").addEventListener("input", function () {
+    validateField(this, /^[a-zA-ZÑñáéíóúÁÉÍÓÚ\s]+$/, "nameError");
+});
+
+    
+        document.getElementById("phone").addEventListener("input", function () {
+            validateField(this, /^09\d{8}$/, "phoneError");
+        });
+    
+        document.getElementById("email").addEventListener("input", function () {
+            validateField(this, /^[^\s@]+@[^\s@]+\.[^\s@]+$/, "emailError");
+        });
+    
+        document.getElementById("title").addEventListener("input", function () {
+            validateField(this, /^[a-zA-ZÑñáéíóúÁÉÍÓÚ\s]+$/
+, "titleError");
+        });
+    
+        document.getElementById("area").addEventListener("input", function () {
+            validateField(this, /^[a-zA-ZÑñáéíóúÁÉÍÓÚ\s]+$/
+, "areaError");
+        });
+    
+        function validateField(input, regex, errorId) {
+            const errorMessage = document.getElementById(errorId);
+            if (!regex.test(input.value)) {
+                errorMessage.style.display = "block";
+                return false;
+            } else {
+                errorMessage.style.display = "none";
+                return true;
+            }
+        }
+    
+        function updateTable() {
+    const tableBody = document.getElementById('specialistTable');
+    tableBody.innerHTML = '';
+
+    specialists.forEach((specialist, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${specialist.name}</td>
+            <td>${specialist.phone}</td>
+            <td>${specialist.email}</td>
+            <td>${specialist.title}</td>
+            <td>${specialist.area}</td>
+            <td>
+                <button class="btn btn-warning btn-sm" onclick="editSpecialist(${index})">Modificar</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteSpecialist(${index})">Borrar</button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+    
+        function saveSpecialist() {
+    let isValid = true;
+
+    // Obtener los valores de los campos
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const title = document.getElementById("title").value.trim();
+    const area = document.getElementById("area").value.trim();
+
+    // Expresiones regulares para validación
+    const nameRegex = /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/; // Solo letras y espacios
+    const phoneRegex = /^09\d{8}$/; // Formato ecuatoriano (09xxxxxxxx)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Validación básica de email
+
+    // Validar Nombre
+    if (name === "" || !nameRegex.test(name)) {
+        document.getElementById("nameError").style.display = "block";
+        isValid = false;
+    } else {
+        document.getElementById("nameError").style.display = "none";
+    }
+
+    // Validar Teléfono
+    if (phone === "" || !phoneRegex.test(phone)) {
+        document.getElementById("phoneError").style.display = "block";
+        isValid = false;
+    } else {
+        document.getElementById("phoneError").style.display = "none";
+    }
+
+    // Validar Correo Electrónico
+    if (email === "" || !emailRegex.test(email)) {
+        document.getElementById("emailError").style.display = "block";
+        isValid = false;
+    } else {
+        document.getElementById("emailError").style.display = "none";
+    }
+
+    // Validar Título
+    if (title === "" || !nameRegex.test(title)) {
+        document.getElementById("titleError").style.display = "block";
+        isValid = false;
+    } else {
+        document.getElementById("titleError").style.display = "none";
+    }
+
+    // Validar Especialidad
+    if (area === "" || !nameRegex.test(area)) {
+        document.getElementById("areaError").style.display = "block";
+        isValid = false;
+    } else {
+        document.getElementById("areaError").style.display = "none";
+    }
+
+    // Si todos los campos son válidos, se puede guardar el especialista
+    if (isValid) {
+        alert("Especialista guardado correctamente."); // Aquí podrías hacer la inserción en la base de datos
+        document.getElementById("specialistForm").reset();
+    }
+}
+    
+        function editSpecialist(index) {
+            const specialist = specialists[index];
+            document.getElementById('name').value = specialist.name;
+            document.getElementById('phone').value = specialist.phone;
+            document.getElementById('email').value = specialist.email;
+            document.getElementById('title').value = specialist.title;
+            document.getElementById('area').value = specialist.area;
+    
+            const modal = new bootstrap.Modal(document.getElementById('specialistModal'));
+            modal.show();
+    
+            editingIndex = index;
+        }
+    
+        
+    </script>
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+
+    
+</body>
+
+</html>
+

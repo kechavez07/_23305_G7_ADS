@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Terapia Impartida</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+         :root {
+      --color-selected:      #4CAF50;
+      --color-preselected:   #FF5252;
+      --sidebar-bg:          #2C3E50;
+      --dashboard-btn:       #34495E;
+      --dashboard-active:    #3498DB;
+      --btn-primary-content: #2980B9;
+      --btn-success-main:    #27AE60;
+      --text-primary:        #2C3E50;
+      --text-secondary:      #7F8C8D;
+    }
+    .sidebar {
+      background-color:#2C3E50 !important;
+    }
+        .patient-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .patient-list-item button {
+            font-size: 14px;
+        }
+        .confirmation-message {
+            margin-top: 20px;
+            display: none;
+        }
+        .btn-asistencia {
+            font-weight: bold;
+        }
+        .modal-header, .modal-footer {
+            border: none;
+        }
+        .time-slot-button {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        #timeSlotsContainer, #modifyTimeSlotsContainer, #deleteTimeSlotsContainer {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .assigned-schedule {
+            margin-top: 20px;
+        }
+        #confirmationMessage, #modifyConfirmationMessage, #deleteConfirmationMessage {
+            margin-top: 10px;
+        }
+    
+
+    .sidebar-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-header img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-link {
+      color: #ECF0F1 !important;
+      padding: 0.8rem 1.5rem !important;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .nav-link:hover {
+      background: var(--dashboard-active) !important;
+      transform: translateX(8px);
+    }
+
+    .nav-link.active {
+      background: var(--dashboard-active) !important;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .section-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--dashboard-active);
+    }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Barra lateral -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse" style="position: fixed; top: 0; bottom: 0; left: 0; height: 100vh; padding-top: 20px; background-color: #f8f9fa;">
+                <div class="sidebar-header">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRByXdlFL7j91LhNlOH684Rj3oPVBLUuGbJA&s" 
+                         alt="Logo" class="img-fluid">
+                    <h4 class="text-white mt-3 mb-0">Fundación Carlitos</h4>
+                    <small class="text-muted">Gestion del Especialista</small>
+                  </div>
+                  <ul class="nav flex-column">
+                    <li class="nav-item">
+                      <a class="nav-link" href="GestionarDisponibilidadActEspecialista.html">
+                        <i class="fas fa-calendar-plus"></i>
+                        Gestionar disponibilidad
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="CancelarCitasActEspecialista.html">
+                        <i class="fas fa-calendar-times"></i>
+                        Cancelar Cita
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link active" href="#" onclick="showSection('reagendar')">
+                        <i class="fas fa-calendar-alt"></i>
+                        Registrar Terapia Impartida
+                      </a>
+                    </li>
+                  </ul>
+            </nav>
+
+            <!-- Contenido principal -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <h1 class="mt-4">Registrar Terapia Impartida</h1>
+                <br>
+
+                <!-- Lista de pacientes -->
+                <div id="patientList">
+                    <div class="patient-list-item">
+                        <span>Juan Pérez - 05/02/2025 10:00 AM</span>
+                        <button class="btn btn-outline-primary btn-asistencia" onclick="updateAttendance(1)">¿Asistió?</button>
+                    </div>
+                    <div class="patient-list-item">
+                        <span>Ana Gómez - 05/02/2025 11:30 AM</span>
+                        <button class="btn btn-outline-primary btn-asistencia" onclick="updateAttendance(2)">¿Asistió?</button>
+                    </div>
+                    <div class="patient-list-item">
+                        <span>Carlos Sánchez - 05/02/2025 01:00 PM</span>
+                        <button class="btn btn-outline-primary btn-asistencia" onclick="updateAttendance(3)">¿Asistió?</button>
+                    </div>
+                    <div class="patient-list-item">
+                        <span>María López - 05/02/2025 02:30 PM</span>
+                        <button class="btn btn-outline-primary btn-asistencia" onclick="updateAttendance(4)">¿Asistió?</button>
+                    </div>
+                    <div class="patient-list-item">
+                        <span>Pedro Rodríguez - 05/02/2025 04:00 PM</span>
+                        <button class="btn btn-outline-primary btn-asistencia" onclick="updateAttendance(5)">¿Asistió?</button>
+                    </div>
+                </div>
+
+                <!-- Mensaje de confirmación -->
+                <div id="confirmationMessage" class="alert alert-success confirmation-message">
+                    El estado de la cita ha sido actualizado correctamente.
+                </div>
+
+                <!-- Modal de Confirmación -->
+                <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="confirmModalLabel">Confirmación de Asistencia</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <!-- Se mostrará la información del paciente (nombre, fecha y hora) -->
+                          <p id="appointmentDetails"></p>
+                          <p>¿El paciente asistió a la cita?</p>
+                          <div class="mb-3">
+                            <label for="additionalComments" class="form-label">Comentarios adicionales:</label>
+                            <textarea id="additionalComments" class="form-control" rows="3"></textarea>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnNo">No</button>
+                          <button type="button" class="btn btn-primary" id="btnYes">Sí</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentPatientId = null;
+
+        // Función para abrir el modal y preguntar si asistió
+        function updateAttendance(patientId) {
+      currentPatientId = patientId;
+      const patientNames = ["Juan Pérez", "Ana Gómez", "Carlos Sánchez", "María López", "Pedro Rodríguez"];
+      // Se obtiene la información completa del paciente (nombre, fecha y hora) desde el listado
+      const appointmentDetail = document.querySelectorAll('.patient-list-item span')[patientId - 1].textContent;
+
+      // Actualizar el título del modal con el nombre del paciente
+      document.getElementById('confirmModalLabel').textContent = `Confirmación de Asistencia de ${patientNames[patientId - 1]}`;
+      // Mostrar la información completa en el modal
+      document.getElementById('appointmentDetails').textContent = appointmentDetail;
+      
+      // Reiniciar el área de comentarios
+      document.getElementById('additionalComments').value = "";
+
+      // Mostrar el modal
+      const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+      confirmModal.show();
+    }
+
+        // Cuando el especialista haga clic en "Sí", actualizamos el estado
+        document.getElementById('btnYes').addEventListener('click', function() {
+            const patientNames = ["Juan Pérez", "Ana Gómez", "Carlos Sánchez", "María López", "Pedro Rodríguez"];
+            const patientName = patientNames[currentPatientId - 1];
+            const button = document.querySelectorAll('.btn-asistencia')[currentPatientId - 1];
+
+            // Actualizamos el texto y el estilo del botón
+            button.textContent = 'Asistió';
+            button.classList.remove('btn-outline-primary');
+            button.classList.add('btn-success');
+
+            // Ocultamos el modal y mostramos el mensaje de confirmación
+            const confirmModal = bootstrap.Modal.getInstance(document.getElementById('confirmModal'));
+            confirmModal.hide();
+
+            // Mostrar mensaje de confirmación
+            const confirmationMessage = document.getElementById('confirmationMessage');
+            confirmationMessage.style.display = 'block';
+            setTimeout(() => {
+                confirmationMessage.style.display = 'none';
+            }, 3000);
+
+            console.log(`Estado de la cita de ${patientName}: Asistió`);
+        });
+
+        // Cuando el especialista haga clic en "No", actualizamos el estado como "No Asistió"
+        document.getElementById('btnNo').addEventListener('click', function() {
+            const patientNames = ["Juan Pérez", "Ana Gómez", "Carlos Sánchez", "María López", "Pedro Rodríguez"];
+            const patientName = patientNames[currentPatientId - 1];
+            const button = document.querySelectorAll('.btn-asistencia')[currentPatientId - 1];
+
+            // Actualizamos el texto y el estilo del botón a "No Asistió"
+            button.textContent = 'No Asistió';
+            button.classList.remove('btn-outline-primary');
+            button.classList.add('btn-danger');
+
+            // Ocultamos el modal y mostramos el mensaje de confirmación
+            const confirmModal = bootstrap.Modal.getInstance(document.getElementById('confirmModal'));
+            confirmModal.hide();
+
+            // Mostrar mensaje de confirmación
+            const confirmationMessage = document.getElementById('confirmationMessage');
+            confirmationMessage.style.display = 'block';
+            setTimeout(() => {
+                confirmationMessage.style.display = 'none';
+            }, 3000);
+
+            console.log(`Estado de la cita de ${patientName}: No Asistió`);
+        });
+    </script>
+</body>
+</html>
