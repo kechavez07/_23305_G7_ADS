@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema de Citas Médicas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-selected:      #4CAF50;
+      --color-preselected:   #FF5252;
+      --sidebar-bg:          #2C3E50;
+      --dashboard-btn:       #34495E;
+      --dashboard-active:    #3498DB;
+      --btn-primary-content: #2980B9;
+      --btn-success-main:    #27AE60;
+      --text-primary:        #2C3E50;
+      --text-secondary:      #7F8C8D;
+    }
+
+    body {
+      background-color: #F5F6FA;
+      min-height: 100vh;
+      font-family: 'Poppins', sans-serif;
+      color: var(--text-primary);
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 280px;
+      background: var(--sidebar-bg);
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .sidebar-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-header img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-link {
+      color: #ECF0F1 !important;
+      padding: 0.8rem 1.5rem !important;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .nav-link:hover {
+      background: var(--dashboard-active) !important;
+      transform: translateX(8px);
+    }
+
+    .nav-link.active {
+      background: var(--dashboard-active) !important;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .main-content {
+      margin-left: 280px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+
+    .section-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--dashboard-active);
+    }
+
+    .card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .calendar {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1px;
+  background: #EBEDF2;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #0230a3;
+}
+
+
+.cell {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  transition: all 0.2s ease;
+  position: relative;
+  font-size: 0.9rem;
+  border: 1px solid #00000063;
+}
+.cell:nth-child(-n+6) {
+  background: #f8f9fa;
+  font-weight: 600;
+  border-bottom: 2px solid #dee2e6;
+}
+.cell:nth-child(7n + 1) {
+  border-right: 2px solid #dee2e6;
+}
+
+.cell:hover {
+  transform: scale(1.03);
+  z-index: 2;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+}
+
+    .cell.selected {
+      background: var(--color-selected);
+      color: white;
+      font-weight: 500;
+    }
+
+    .cell.preselected {
+      background: var(--color-preselected);
+      color: white;
+      position: relative;
+      cursor: not-allowed;
+    }
+
+    .cell.preselected:after {
+      content: "✖";
+      position: absolute;
+      font-size: 12px;
+      bottom: 2px;
+      right: 4px;
+    }
+
+    .form-control {
+      border: 2px solid #EBEDF2;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--dashboard-active);
+      box-shadow: none;
+    }
+
+    .btn {
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: var(--btn-primary-content);
+      border-color: var(--btn-primary-content);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(41, 128, 185, 0.3);
+    }
+
+    .btn-success {
+      background: var(--btn-success-main);
+      border-color: var(--btn-success-main);
+    }
+
+    .list-group-item {
+      border: none;
+      margin-bottom: 0.5rem;
+      border-radius: 8px !important;
+      transition: all 0.3s ease;
+    }
+
+    .list-group-item:hover {
+      transform: translateX(5px);
+    }
+
+    .badge {
+      padding: 0.5em 0.75em;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+      
+      .main-content {
+        margin-left: 0;
+        padding: 1rem;
+      }
+      
+      .calendar {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .cell {
+        height: 40px;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRByXdlFL7j91LhNlOH684Rj3oPVBLUuGbJA&s" 
+           alt="Logo" class="img-fluid">
+      <h4 class="text-white mt-3 mb-0">Fundación Carlitos</h4>
+      <small class="text-muted" style="color: #EBEDF2 !important;">Reagendar citas</small>
+    </div>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link" href="AgendarCitaCliente.html">
+          <i class="fas fa-calendar-plus"></i>
+          Agendar Cita
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="CancelarCitasCliente.html">
+          <i class="fas fa-calendar-times"></i>
+          Cancelar Cita
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="reagendarCliente.html">
+          <i class="fas fa-calendar-alt"></i>
+          Reagendar Cita
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Contenido Principal -->
+  <div class="main-content">
+    <!-- Sección Agendar Cita -->
+    <div id="agendar" class="section">
+      <div class="section-header">
+        <h2 class="mb-0">Reagendar Cita</h2>
+        <small class="text-muted">Seleccione la cita médica que desea reagendar, el especialista y el horario</small>
+      </div>
+      <div class="card p-4">
+        <form id="appointmentForm">
+          <div class="row g-4">
+            <div class="col-lg-4">
+              <div class="mb-4">
+                <label class="form-label">Citas médicas canceladas</label>
+                <select id="cancelledAppointments" class="form-select" onchange="updateSpecialists()" required>
+                  <option value="">Seleccionar cita médica</option>
+                  <!-- Las citas canceladas se cargarán dinámicamente aquí -->
+                </select>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Seleccionar Nuevo Especialista</label>
+                <select id="specialist" class="form-select" required>
+                  <option value="">Seleccione una cita médica primero</option>
+                  <!-- Los especialistas se cargarán dinámicamente aquí -->
+                </select>
+              </div>
+            </div>
+            <div class="col-lg-8">
+              <div id="weekRange" class="mb-3 fw-bold text-primary"></div>
+              <div class="calendar" id="calendar"></div>
+            </div>
+          </div>
+          <button id="confirmButton" type="submit" class="btn btn-success w-100 mt-4">
+            <i class="fas me-2"></i>Reagendar Cita
+          </button>
+        </form>
+      </div>
+    </div>
+
+
+
+  
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    let appointments = [];
+    let selectedSlots = [];
+    let editingAppointment = null;
+
+    const busySlots = [
+      { hour: "09:00", day: 0 },
+      { hour: "15:00", day: 1 },
+      { hour: "12:00", day: 2 },
+      { hour: "11:00", day: 3 },
+      { hour: "10:00", day: 4 }
+    ];
+    let citasCanceladas = [
+      { id: 1, date: "2025-03-01", time: "10:00", specialist: "Dr. Juan Pérez", specialty: "Fisioterapia" },
+      { id: 2, date: "2025-03-02", time: "11:00", specialist: "Dr. Ana López", specialty: "Psicopedagogía" },
+    ];
+    let specialists = {
+      "Fisioterapia": ["Dr. Juan Pérez", "Dr. Carlos Rodríguez"],
+      "Psicopedagogía": ["Dr. Ana López", "Dra. Laura Gómez"],
+    };
+    let selectedAppointment = null;
+    let selectedSpecialist = null;
+    const cancelledAppointmentsSelect = document.getElementById("cancelledAppointments");
+    const specialistSelect = document.getElementById("specialist");
+    // Cargar citas canceladas
+    citasCanceladas.forEach((appointment) => {
+      const option = document.createElement("option");
+      option.value = appointment.id;
+      option.textContent = `${appointment.date} - ${appointment.time} - ${appointment.specialist} - ${appointment.specialty}`;
+      cancelledAppointmentsSelect.appendChild(option);
+    });
+    function updateSpecialists() {
+      const appointmentId = cancelledAppointmentsSelect.value;
+      if (appointmentId) {
+        selectedAppointment = citasCanceladas.find((a) => a.id == appointmentId);
+        const specialty = selectedAppointment.specialty;
+        const specialistOptions = specialists[specialty];
+
+        // Limpiar y cargar los especialistas
+        specialistSelect.innerHTML = "";
+        specialistSelect.innerHTML = '<option value="">Seleccione un especialista</option>';
+        specialistOptions.forEach((specialist) => {
+          const option = document.createElement("option");
+          option.value = specialist;
+          option.textContent = specialist;
+          specialistSelect.appendChild(option);
+        });
+      }
+    }
+
+
+   
+
+    function updateWeekRange() {
+   const weekRangeEl = document.getElementById("weekRange");
+   const now = new Date();
+   const dayOfWeek = now.getDay();
+   const diffToMonday = (dayOfWeek === 0) ? 1 : (1 - dayOfWeek);
+   const monday = new Date(now);
+   monday.setDate(now.getDate() + diffToMonday);
+   const friday = new Date(monday);
+   friday.setDate(monday.getDate() + 4);
+   weekRangeEl.textContent = `${monday.toLocaleDateString()} - ${friday.toLocaleDateString()}`;
+}
+
+    function generateCalendar(containerId) {
+      const calendar = document.getElementById(containerId);
+      calendar.innerHTML = "";
+
+      const days = ["Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+      days.forEach(day => {
+        const header = document.createElement("div");
+        header.className = "cell fw-bold bg-light";
+        header.textContent = day;
+        calendar.appendChild(header);
+      });
+
+      const hours = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
+      hours.forEach(hour => {
+        const timeCell = document.createElement("div");
+        timeCell.className = "cell fw-bold bg-light";
+        timeCell.textContent = hour;
+        calendar.appendChild(timeCell);
+
+        for (let i = 1; i < days.length; i++) {
+    const cell = document.createElement("div");
+    cell.className = "cell";
+    cell.dataset.hour = hour;
+    cell.dataset.day = i.toString();  // Almacenar como string
+    
+    // Convertir a número para la verificación
+    if (isSlotTaken(hour, parseInt(cell.dataset.day, 10))) {
+      cell.classList.add("preselected");
+    }
+
+          cell.addEventListener("click", () => handleSlotClick(cell));
+          calendar.appendChild(cell);
+        }
+      });
+    }
+
+    function handleSlotClick(cell) {
+  if (cell.classList.contains("preselected")) {
+    alert("Este horario no está disponible.");
+    return;
+  }
+
+  if (!selectedAppointment) {
+    alert("Por favor, seleccione primero una cita médica a reagendar.");
+    return;
+  }
+
+  const specialist = document.getElementById("specialist").value;
+  if (!specialist) {
+    alert("Por favor, seleccione un nuevo especialista antes de elegir un horario.");
+    return;
+  }
+
+  // Eliminar esta parte redundante
+  /* if (!cell.classList.contains("selected")) {
+    const day = cell.dataset.day;
+    const alreadySelected = selectedSlots.some(slot => slot.day == day);
+    const alreadyScheduled = appointments.some(app => 
+      app.specialty === specialty && app.day == day && app.status === "active"
+    );
+    if (alreadySelected || alreadyScheduled) {
+      alert("Ya tiene una cita para este día y especialidad.");
+      return;
+    }
+  } */
+  
+  // Mantener solo esta lógica de selección única
+  document.querySelectorAll('.cell.selected').forEach(c => c.classList.remove('selected'));
+  cell.classList.add("selected");
+  updateSelectedSlots();
+}
+
+    function updateSelectedSlots() {
+  const selectedCell = document.querySelector(".cell.selected");
+  selectedSlots = selectedCell ? [{
+    hour: selectedCell.dataset.hour,
+    day: parseInt(selectedCell.dataset.day)
+  }] : [];
+}
+
+       
+    function showSection(sectionId) {
+      document.querySelectorAll(".section").forEach(div => div.classList.add("d-none"));
+      document.getElementById(sectionId).classList.remove("d-none");
+      
+      document.querySelectorAll(".sidebar .nav-link").forEach(link => link.classList.remove("active"));
+      const activeLink = document.querySelector(`.sidebar .nav-link[href="#${sectionId}"]`);
+      if (activeLink) activeLink.classList.add("active");
+      
+      if (sectionId === "cancelar") {
+        showActiveAppointments();
+      } else if (sectionId === "reagendar") {
+        generateCalendar("reagendarCalendar");
+      }
+    }
+
+    function prepareReschedule(id) {
+      editingAppointment = appointments.find(app => app.id === id);
+      selectedSlots = [];
+      const modal = new bootstrap.Modal(document.getElementById('reagendarModal'));
+      modal.show();
+      generateCalendar("reagendarCalendarModal");
+    }
+
+    function confirmReschedule() {
+      if (selectedSlots.length === 0) {
+        alert("Seleccione un nuevo horario.");
+        return;
+      }
+      const newSlot = selectedSlots[0];
+      editingAppointment.day = newSlot.day;
+      editingAppointment.hour = newSlot.hour;
+      //updateAppointmentsList();
+      generateCalendar("calendar");
+      bootstrap.Modal.getInstance(document.getElementById('reagendarModal')).hide();
+    }
+
+    function getDayName(dayIndex) {
+      const days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+      return days[dayIndex];
+    }
+
+    function isSlotTaken(hour, day) {
+  const dayNumber = parseInt(day, 10); // Convertir a número
+  const hourString = hour.toString(); // Asegurar que sea string
+  
+  return busySlots.some(slot => 
+    slot.hour === hourString && 
+    slot.day === dayNumber
+  ) || appointments.some(app => 
+    app.hour === hourString && 
+    app.day === dayNumber && 
+    app.status === "active"
+  );
+}
+
+    function markPreselectedSlots() {
+      document.querySelectorAll(".cell").forEach(cell => {
+        cell.classList.toggle("preselected", isSlotTaken(cell.dataset.hour, cell.dataset.day));
+      });
+    }
+
+    document.getElementById("appointmentForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    
+    // Validar campos requeridos
+    const cancelledAppointment = document.getElementById("cancelledAppointments").value;
+    const specialist = document.getElementById("specialist").value;
+    const hasSelectedSlot = selectedSlots.length > 0;
+    
+    let errorMessage = "";
+    if (!cancelledAppointment) errorMessage += "• Seleccione una cita médica cancelada\n";
+    if (!specialist) errorMessage += "• Seleccione un nuevo especialista\n";
+    if (!hasSelectedSlot) errorMessage += "• Seleccione un nuevo horario\n";
+    
+    if (errorMessage) {
+        alert("Para reagendar debe completar:\n" + errorMessage);
+        return;
+    }
+
+    // Resto del código de envío del formulario...
+    const confirmButton = document.getElementById("confirmButton");
+    confirmButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Citas reservadas exitosamente Redirigiendo...';
+    confirmButton.disabled = true;
+
+    // Vaciar citas y actualizar vista
+    appointments = [];
+    //
+    // updateAppointmentsList();
+    generateCalendar("calendar");
+
+    setTimeout(() => {
+        window.location.href = "AgendarCitaCliente.html";
+    }, 3000);
+});
+    // Inicialización
+    updateWeekRange();
+    generateCalendar("calendar");
+    markPreselectedSlots();
+  </script>
+ 
+
+</body>
+</html>
