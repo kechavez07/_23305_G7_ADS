@@ -45,3 +45,26 @@
 | Código del ECS | Descripción del ECS | Número de versión o variante | Fecha de creación | Autor o autores | Localización | Observación | Variante de requisitos de usuario | Variante de plataforma |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | `PDP` | Plan de Desarrollo del Proyecto | V1.0 | 2025-08-05 | Kleber | \\SKIPUR\\Trabajo\\GestionProyecto\\ | Primera versión del plan de desarrollo del proyecto. | N/A | N/A |
+
+---
+### Elemento de Configuración del Software (ECS) - Documento de Backlog
+
+| Campo | Descripción |
+| :--- | :--- |
+| **Código del ECS** | `DBK` |
+| **Nombre del ECS** | Documento de Backlog |
+| **Autor** | Kleber |
+| **Nombre del proyecto** | SKIPUR |
+| **Identificación de la línea base** | `LBGP` (Línea Base Gestión del Proyecto) |
+| **Localización** | \\SKIPUR\\Trabajo\\GestionProyecto\\<br>\\SKIPUR\\Soporte\\LBGP\\ |
+| **Tipo de ECS** | Documento |
+| **Fecha de creación** | 2025-08-05 |
+| **Identificación de la disciplina** | Gestión del proyecto |
+
+---
+
+### Esquema de Versiones y Variantes para un ECS
+
+| Código del ECS | Descripción del ECS | Número de versión o variante | Fecha de creación | Autor o autores | Localización | Observación | Variante de requisitos de usuario | Variante de plataforma |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `DBK` | Documento de Backlog | V1.0 | 2025-08-05 | Kleber | \\SKIPUR\\Trabajo\\GestionProyecto\\ | Primera versión del documento de backlog. | N/A | N/A |
