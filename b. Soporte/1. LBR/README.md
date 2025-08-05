@@ -16,11 +16,16 @@
 
 ---
 
+
+
 ### Esquema de Versiones y Variantes para un ECS
 
 | Código del ECS | Descripción del ECS | Número de versión o variante | Fecha de creación | Autor o autores | Localización | Observación | Variante de requisitos de usuario | Variante de plataforma |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `ERS` | Especificación de Requerimientos de Software | V3.0 | 2025-08-05 | Kleber | \\SKIPUR\\Trabajo\\Requisitos\\ | Tercera versión del documento. | N/A | N/A |
+| `ERS` | Especificación de Requerimientos de Software | V0.0 | 2025-08-05 | Kleber | \\SKIPUR\\Trabajo\\Requisitos\\ | Versión inicial del documento. | N/A | N/A |
+| `ERS` | Especificación de Requerimientos de Software | V1.0 | 2025-08-05 | Kleber | \\SKIPUR\\Trabajo\\Requisitos\\ | Cambio en base a análisis de IREB y correcciones. | N/A | N/A |
+| `ERS` | Especificación de Requerimientos de Software | V2.0 | 2025-08-05 | Kleber | \\SKIPUR\\Trabajo\\Requisitos\\ | Corrección. | N/A | N/A |
+| `ERS` | Especificación de Requerimientos de Software | V3.0 | 2025-08-05 | Kleber | \\SKIPUR\\Trabajo\\Requisitos\\ | Versión actual del documento. | N/A | N/A |
 
 ---
 
