@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Especialistas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.9rem;
+            display: none;
+            margin-top: 5px;
+        }
+        :root {
+      --color-selected:      #4CAF50;
+      --color-preselected:   #FF5252;
+      --sidebar-bg:          #2C3E50;
+      --dashboard-btn:       #34495E;
+      --dashboard-active:    #3498DB;
+      --btn-primary-content: #2980B9;
+      --btn-success-main:    #27AE60;
+      --text-primary:        #2C3E50;
+      --text-secondary:      #7F8C8D;
+    }
+    .sidebar {
+      background-color:#2C3E50 !important;
+    }
+    .sidebar-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-header img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-link {
+      color: #ECF0F1 !important;
+      padding: 0.8rem 1.5rem !important;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .nav-link:hover {
+      background: var(--dashboard-active) !important;
+      transform: translateX(8px);
+    }
+
+    .nav-link.active {
+      background: var(--dashboard-active) !important;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .section-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--dashboard-active);
+    }
+     /* Estilos para el mensaje sin resultados */
+     #noResults {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #f8f9fa;
+      padding: 2rem 3rem;
+      border: 2px solid var(--dashboard-active);
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1050;
+    }
+
+    #noResults h2 {
+      font-size: 2rem;
+      color: var(--dashboard-active);
+      text-align: center;
+      margin: 0;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Barra lateral -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse" style="position: fixed; top: 0; bottom: 0; left: 0; height: 100vh; padding-top: 20px; background-color: #f8f9fa;">
+                <div class="sidebar-header">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRByXdlFL7j91LhNlOH684Rj3oPVBLUuGbJA&s" 
+                         alt="Logo" class="img-fluid">
+                    <h4 class="text-white mt-3 mb-0">Fundación Carlitos</h4>
+                    <small class="text-muted" style="color: white !important;">Gestion del Especialista</small>
+                  </div>
+                  <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="verificarPagoActAdmin.html">
+                          <i class="fas fa-university"></i>
+                          Verificar Pagos
+                        </a>
+                      </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="gestionarEspecialistaActAdmin.html">
+                        <i class="fas fa-tasks"></i>
+                        Gestionar Especialistas
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link active" href="#">
+                        <i class="fas fa-cogs"></i>
+                        Gestionar Especialidades
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="gestionarReportesActAdmin.html">
+                        <i class="fas fa-chart-bar"></i>
+                        Generar reportes
+                      </a>
+                    </li>
+                  </ul>
+            </nav>
+            
+            <!-- Modal para agregar o editar especialidad -->
+            <div class="modal fade" id="specialistModal" tabindex="-1" aria-labelledby="specialistModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="specialistModalLabel">Agregar Especialidad</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="specialistForm">
+                                <div class="mb-3">
+                                    <label for="specialtyName" class="form-label">Nombre de la Especialidad  *</label>
+                                    <input type="text" class="form-control" id="specialtyName" required>
+                                    <div id="specialtyError" class="error-message">El nombre solo puede contener letras y espacios.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Descripción  *</label>
+                                    <input type="text" class="form-control" id="description" required>
+                                    <div id="descriptionError" class="error-message">La descripción solo puede contener letras y espacios.</div>
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="saveSpecialty()">Guardar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenido principal -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <h1 class="mt-4">Gestionar Especialidades</h1>
+                <br>
+                <div class="row mb-3">
+                    <div class="col-auto">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Buscar Especialidades..." onkeyup="searchSpecialty()">
+                    </div>
+                    <div class="col-auto ms-auto">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#specialistModal" onclick="clearForm()">Agregar Especialidad</button>
+                    </div>
+                </div>
+                <br>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nombre de la Especialidad</th>
+                                <th>Descripción</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="specialistTable">
+                            <!-- Datos dinámicos aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+     <!-- Mensaje para cuando no se encuentran registros -->
+  <div id="noResults">
+    <h2>No se encuentran especialidades con el nombre ingresado</h2>
+  </div>
+    
+    <script>
+        // Función para buscar especialidades
+        function searchSpecialty() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const rows = document.querySelectorAll('#specialistTable tr');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const cells = row.getElementsByTagName('td');
+        let found = false;
+        for (let i = 0; i < cells.length - 1; i++) {
+          if (cells[i].innerText.toLowerCase().includes(input)) {
+            found = true;
+            break;
+          }
+        }
+        if (found) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      // Mostrar mensaje si no hay registros visibles
+      if (visibleCount === 0 && input.trim() !== "") {
+        document.getElementById('noResults').style.display = 'block';
+      } else {
+        document.getElementById('noResults').style.display = 'none';
+      }
+    }
+
+        // Función para limpiar el formulario
+        function clearForm() {
+            document.getElementById("specialistForm").reset();
+        }
+  
+        let specialties = [
+            { name: "Medicina General", description: "Niños mayores de 10 años" },
+            { name: "Pediatría", description: "Especialista en niños" }
+        ];
+    
+        let editingIndex = null; // Variable global para almacenar el índice de edición
+    
+        window.onload = updateTable;
+    
+        // Validación de campos
+        document.getElementById("specialtyName").addEventListener("input", function () {
+            validateField(this, /^[a-zA-ZÑñáéíóúÁÉÍÓÚ\s]+$/, "specialtyError");
+        });
+
+        document.getElementById("description").addEventListener("input", function () {
+            validateField(this, /^[a-zA-ZÑñáéíóúÁÉÍÓÚ\s]+$/, "descriptionError");
+        });
+
+        function validateField(input, regex, errorId) {
+            const errorMessage = document.getElementById(errorId);
+            if (input.value.trim() === "") {
+                errorMessage.innerText = "Este campo no puede estar vacío.";
+                errorMessage.style.display = "block";
+                return false;
+            } else if (!regex.test(input.value)) {
+                errorMessage.innerText = "El campo solo puede contener letras y espacios.";
+                errorMessage.style.display = "block";
+                return false;
+            } else {
+                errorMessage.style.display = "none";
+                return true;
+            }
+        }
+
+        function updateTable() {
+            const tableBody = document.getElementById('specialistTable');
+            tableBody.innerHTML = '';
+    
+            specialties.forEach((specialty, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${specialty.name}</td>
+                    <td>${specialty.description}</td>
+                    <td>
+                       
+                        <button class="btn btn-danger btn-sm" onclick="deleteSpecialty(${index})">Borrar</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+    
+        function saveSpecialty() {
+            const name = document.getElementById('specialtyName');
+            const description = document.getElementById('description');
+    
+            if (
+                !validateField(name, /^[a-zA-ZÑñáéíóúÁÉÍÓÚ\s0-9.,:;()&-]+$/, "specialtyError") ||
+                !validateField(description, /^[a-zA-ZÑñáéíóúÁÉÍÓÚ\s0-9.,:;()&-]+$/, "descriptionError")
+            ) {
+                return;
+            }
+    
+            if (editingIndex !== null) {
+                specialties[editingIndex] = { name: name.value, description: description.value };
+                editingIndex = null;
+            } else {
+                specialties.push({ name: name.value, description: description.value });
+            }
+    
+            updateTable();
+            clearForm();
+        }
+    
+        function editSpecialty(index) {
+            const specialty = specialties[index];
+            document.getElementById('specialtyName').value = specialty.name;
+            document.getElementById('description').value = specialty.description;
+            editingIndex = index;
+            document.getElementById('specialistModalLabel').innerText = 'Editar Especialidad';
+            $('#specialistModal').modal('show');
+        }
+    
+        function deleteSpecialty(index) {
+            if (index === 1) {
+        alert("No se puede eliminar esta especialidad, ya que existen especialistas asignados. Por favor, elimine primero a los especialistas asignados.");
+        return;
+    }
+            if (confirm('¿Estás seguro de que quieres borrar esta especialidad?')) {
+                specialties.splice(index, 1);
+                updateTable();
+            }
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
+
+</html>

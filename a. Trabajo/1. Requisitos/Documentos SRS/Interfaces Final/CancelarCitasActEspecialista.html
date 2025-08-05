@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancelar Citas Médicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+
+
+    <style>
+        .confirmation-message {
+            margin-top: 20px;
+            display: none;
+        }
+        .modal-header, .modal-footer {
+            border: none;
+        }
+        :root {
+      --color-selected:      #4CAF50;
+      --color-preselected:   #FF5252;
+      --sidebar-bg:          #2C3E50;
+      --dashboard-btn:       #34495E;
+      --dashboard-active:    #3498DB;
+      --btn-primary-content: #2980B9;
+      --btn-success-main:    #27AE60;
+      --text-primary:        #2C3E50;
+      --text-secondary:      #7F8C8D;
+    }
+    .sidebar {
+      background-color:#2C3E50 !important;
+    }
+    .sidebar-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-header img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-link {
+      color: #ECF0F1 !important;
+      padding: 0.8rem 1.5rem !important;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .nav-link:hover {
+      background: var(--dashboard-active) !important;
+      transform: translateX(8px);
+    }
+
+    .nav-link.active {
+      background: var(--dashboard-active) !important;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .section-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--dashboard-active);
+    }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Barra lateral -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse" style="position: fixed; top: 0; bottom: 0; left: 0; height: 100vh; padding-top: 20px; background-color: #f8f9fa;">
+                <div class="sidebar-header">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRByXdlFL7j91LhNlOH684Rj3oPVBLUuGbJA&s" 
+                         alt="Logo" class="img-fluid">
+                    <h4 class="text-white mt-3 mb-0">Fundación Carlitos</h4>
+                    <small class="text-muted" style="color: white !important;">Cancelar Cita</small>
+                  </div>
+                  <ul class="nav flex-column">
+                    <li class="nav-item">
+                      <a class="nav-link" href="GestionarDisponibilidadActEspecialista.html">
+                        <i class="fas fa-calendar-plus"></i>
+                        Gestionar disponibilidad
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link active" href="#cancelar">
+                        <i class="fas fa-calendar-times"></i>
+                        Cancelar Cita
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="ActEspecialista_RegTerapias.html">
+                        <i class="fas fa-calendar-alt"></i>
+                        Registrar terapias impartidas
+                      </a>
+                    </li>
+                  </ul>
+            </nav>
+
+           <!-- Contenido principal -->
+           <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <h1 class="mt-4">Cancelar Cita Médica</h1>
+            <br>
+
+            <!-- Tabla de citas agendadas -->
+            <table class="table table-bordered ">
+                <thead>
+                    <tr>
+                        <th>Nombre del cliente</th>
+                        <th>Fecha y Hora</th>
+                        <th>Nombre del paciente</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="appointmentList">
+                    <tr>
+                        <td>Juan Pérez</td>
+                        <td>2025-07-30 14:00</td>
+                        <td>Roberto Andrade</td>
+                        <td><button class="btn btn-outline-primary" onclick="cancelAppointment(0)">Cancelar</button></td>
+                    </tr>
+                    <tr>
+                        <td>María López</td>
+                        <td>2025-01-31 10:30</td>
+                        <td>Laura Fernández</td>
+                        <td><button class="btn btn-outline-primary" onclick="cancelAppointment(1)">Cancelar</button></td>
+                    </tr>
+                    <tr>
+                        <td>Carlos Martínez</td>
+                        <td>2025-01-01 09:00</td>
+                        <td>Fernando Gómez</td>
+                        <td><button class="btn btn-outline-primary" onclick="cancelAppointment(2)">Cancelar</button></td>
+                    </tr>
+                    <tr>
+                        <td>Elena Sánchez</td>
+                        <td>2025-08-02 15:00</td>
+                        <td>Antonio Ruiz</td>
+                        <td><button class="btn btn-outline-primary" onclick="cancelAppointment(3)">Cancelar</button></td>
+                    </tr>
+                    <tr>
+                        <td>Pedro García</td>
+                        <td>2025-01-03 11:00</td>
+                        <td>Lucía Pérez</td>
+                        <td><button class="btn btn-outline-primary" onclick="cancelAppointment(4)">Cancelar</button></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Mensaje de confirmación -->
+            <div id="confirmationMessage" class="alert alert-success confirmation-message">
+                La cita ha sido cancelada correctamente.
+            </div>
+
+            <!-- Modal de Confirmación -->
+            <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirmModalLabel">Confirmación de Cancelación</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" id="modalBody">
+                            ¿Estás seguro de que quieres cancelar esta cita?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnCancel">Cancelar</button>
+                            <button type="button" class="btn btn-danger" id="btnConfirmCancel">Confirmar Cancelación</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+ function cancelAppointment(index) {
+    // Obtener la fila correspondiente de la cita
+    const appointmentRow = document.querySelectorAll("#appointmentList tr")[index];
+    const appointmentDate = new Date(appointmentRow.cells[1].textContent);
+    const now = new Date();
+
+    // Calcular la diferencia de horas entre la cita y el momento actual
+    const timeDiff = (appointmentDate - now) / 1000 / 60 / 60; // Diferencia en horas
+
+    // Verificar si la cita está dentro de las 3 horas previas
+    if (timeDiff < 3) {
+        alert("No es posible cancelar la cita médica, sólo se puede realizar la cancelación con al menos 3 horas de anticipación.");
+        return;
+    }
+
+    // Mostrar el modal de confirmación si se puede cancelar
+    const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    modal.show();
+
+    // Configurar el botón de confirmar cancelación
+    const btnConfirmCancel = document.getElementById('btnConfirmCancel');
+    btnConfirmCancel.onclick = function() {
+        // Si el usuario confirma la cancelación, actualizar la UI
+        appointmentRow.style.textDecoration = "line-through"; // Ejemplo de cambio visual
+        appointmentRow.cells[3].innerHTML = "Cancelada"; // Cambiar la acción de "Cancelar"
+        
+        // Mostrar mensaje de éxito
+        const confirmationMessage = document.getElementById('confirmationMessage');
+        confirmationMessage.style.display = "block";
+        
+        // Cerrar el modal
+        modal.hide();
+    };
+}
+
+// Función para cerrar el modal sin hacer cambios
+document.getElementById('btnCancel').onclick = function() {
+    const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    modal.hide();
+};
+    </script>
+    <!-- Incluir el JavaScript de Bootstrap (necesario para el modal) -->
+</body>
+</html>
+
+

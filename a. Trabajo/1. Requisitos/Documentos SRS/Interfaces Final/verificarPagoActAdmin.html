@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Especialistas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.9rem;
+            display: none;
+            margin-top: 5px;
+        }
+        :root {
+      --color-selected:      #4CAF50;
+      --color-preselected:   #FF5252;
+      --sidebar-bg:          #2C3E50;
+      --dashboard-btn:       #34495E;
+      --dashboard-active:    #3498DB;
+      --btn-primary-content: #2980B9;
+      --btn-success-main:    #27AE60;
+      --text-primary:        #2C3E50;
+      --text-secondary:      #7F8C8D;
+    }
+    .sidebar {
+      background-color:#2C3E50 !important;
+    }
+    .sidebar-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-header img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-link {
+      color: #ECF0F1 !important;
+      padding: 0.8rem 1.5rem !important;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .nav-link:hover {
+      background: var(--dashboard-active) !important;
+      transform: translateX(8px);
+    }
+
+    .nav-link.active {
+      background: var(--dashboard-active) !important;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .section-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--dashboard-active);
+    }
+     /* Estilos para el mensaje sin resultados */
+     #noResults {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #f8f9fa;
+      padding: 2rem 3rem;
+      border: 2px solid var(--dashboard-active);
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1050;
+    }
+
+    #noResults h2 {
+      font-size: 2rem;
+      color: var(--dashboard-active);
+      text-align: center;
+      margin: 0;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Barra lateral -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse" style="position: fixed; top: 0; bottom: 0; left: 0; height: 100vh; padding-top: 20px; background-color: #f8f9fa;">
+                <div class="sidebar-header">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRByXdlFL7j91LhNlOH684Rj3oPVBLUuGbJA&s" 
+                         alt="Logo" class="img-fluid">
+                    <h4 class="text-white mt-3 mb-0">Fundación Carlitos</h4>
+                    <small class="text-muted" style="color: white !important;">Gestion del Especialista</small>
+                  </div>
+                  <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                          <i class="fas fa-university"></i>
+                          Verificar Pagos
+                        </a>
+                      </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="gestionarEspecialistaActAdmin.html">
+                        <i class="fas fa-tasks"></i>
+                        Gestionar Especialistas
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#">
+                        <i class="fas fa-cogs"></i>
+                        Gestionar Especialidades
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="gestionarReportesActAdmin.html">
+                        <i class="fas fa-chart-bar"></i>
+                        Generar reportes
+                      </a>
+                    </li>
+                  </ul>
+            </nav>
+            
+            <!-- Modal para agregar o editar especialidad -->
+            <div class="modal fade" id="specialistModal" tabindex="-1" aria-labelledby="specialistModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="specialistModalLabel">Agregar Especialidad</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="specialistForm">
+                                <div class="mb-3">
+                                    <label for="specialtyName" class="form-label">Nombre de la Especialidad  *</label>
+                                    <input type="text" class="form-control" id="specialtyName" required>
+                                    <div id="specialtyError" class="error-message">El nombre solo puede contener letras y espacios.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Descripción  *</label>
+                                    <input type="text" class="form-control" id="description" required>
+                                    <div id="descriptionError" class="error-message">La descripción solo puede contener letras y espacios.</div>
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="saveSpecialty()">Guardar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <h1 class="mt-4">Verificación de Pagos</h1>
+                
+                <!-- Listado de pagos pendientes -->
+                <div class="row mt-4" id="paymentList">
+                    <!-- Los pagos se cargarán dinámicamente aquí -->
+                </div>
+
+                <!-- Mensaje sin resultados -->
+                <div id="noPaymentsMessage" class="text-center mt-5" style="display: none;">
+                    <h3 class="text-muted">No hay pagos pendientes de verificación</h3>
+                </div>
+
+                <!-- Modal de verificación -->
+                <div class="modal fade" id="verificationModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Verificar Pago</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>Información del Cliente</h6>
+                                        <p id="clientName"></p>
+                                        <p id="uploadDate"></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>Boucher</h6>
+                                        <img id="voucherImage" class="voucher-image img-fluid" alt="Comprobante de pago">
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <button class="btn btn-success" onclick="markAsValid()">
+                                            <i class="fas fa-check"></i> Válido
+                                        </button>
+                                        <button class="btn btn-danger" onclick="markAsInvalid()">
+                                            <i class="fas fa-times"></i> No Válido
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+     <!-- Mensaje para cuando no se encuentran registros -->
+  <div id="noResults">
+    <h2>No se encuentran especialidades con el nombre ingresado</h2>
+  </div>
+    
+    <script>
+        // Función para buscar especialidades
+     // Datos de ejemplo
+     let verificationModalInstance = null;
+     // En la función de inicialización
+window.onload = () => {
+    loadPayments();
+    
+    // Inicializar el modal una sola vez
+    verificationModalInstance = new bootstrap.Modal(
+        document.getElementById('verificationModal'), 
+        { keyboard: false }
+    );
+};
+
+     let payments = [
+            {
+                id: 1,
+                client: "Juan Pérez",
+                uploadDate: "2025-02-23 14:30",
+                voucher: "boucher.jpg",
+                status: "pending",
+                appointments: ["2025-03-01 10:00", "2025-03-05 11:00"]
+            },
+            {
+                id: 2,
+                client: "María García",
+                uploadDate: "2025-02-24 09:15",
+                voucher: "boucher.jpg",
+                status: "pending",
+                appointments: ["2025-03-02 15:30"]
+            },
+            {
+                id: 3,
+                client: "María Herrera",
+                uploadDate: "2025-02-24 09:15",
+                voucher: "boucher.jpg",
+                status: "pending",
+                appointments: ["2025-03-02 15:30"]
+            },
+            {
+                id: 4,
+                client: "Marco Hernandez",
+                uploadDate: "2025-02-24 09:15",
+                voucher: "boucher.jpg",
+                status: "pending",
+                appointments: ["2025-03-02 15:30"]
+            }
+        ];
+
+        let selectedPayment = null;
+
+        // Cargar lista de pagos
+        function loadPayments() {
+            const paymentList = document.getElementById('paymentList');
+            const pendingPayments = payments.filter(p => p.status === 'pending');
+
+            if (pendingPayments.length === 0) {
+                document.getElementById('noPaymentsMessage').style.display = 'block';
+                paymentList.innerHTML = '';
+                return;
+            }
+
+            document.getElementById('noPaymentsMessage').style.display = 'none';
+            paymentList.innerHTML = pendingPayments.map(payment => `
+                <div class="col-md-4 mb-4">
+                    <div class="card payment-card" onclick="showPaymentDetail(${payment.id})">
+                        <div class="card-body">
+                            <h5 class="card-title">${payment.client}</h5>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    Subido: ${new Date(payment.uploadDate).toLocaleString()}
+                                </small>
+                            </p>
+                            <span class="badge bg-warning status-badge">Pendiente</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Mostrar detalle del pago
+        function showPaymentDetail(paymentId) {
+    selectedPayment = payments.find(p => p.id === paymentId);
+    document.getElementById('clientName').textContent = `Cliente: ${selectedPayment.client}`;
+    document.getElementById('uploadDate').textContent = `Subido: ${new Date(selectedPayment.uploadDate).toLocaleString()}`;
+    document.getElementById('voucherImage').src = selectedPayment.voucher;
+    
+    // Mostrar usando la instancia previamente creada
+    verificationModalInstance.show();
+}
+
+        // Marcar como válido
+        function markAsValid() {
+    selectedPayment.status = 'valid';
+    generateAppointmentReminders(selectedPayment);
+    updateAppointmentStatus('agendadas');
+    loadPayments();
+    verificationModalInstance.hide(); // Usar la instancia
+}
+
+
+        // Marcar como no válido
+        function markAsInvalid() {
+    selectedPayment.status = 'invalid';
+    updateAppointmentStatus('reservadas');
+    loadPayments();
+    verificationModalInstance.hide(); // Usar la instancia
+}
+
+        // Funciones auxiliares
+        function generateAppointmentReminders(payment) {
+            console.log('Generando recordatorios para:', payment.appointments);
+            // Lógica para enviar notificaciones
+        }
+
+        function updateAppointmentStatus(status) {
+            console.log(`Actualizando estado de citas a: ${status}`);
+            // Lógica para actualizar estado en el sistema
+        }
+
+        
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
+
+</html>

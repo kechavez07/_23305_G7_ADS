@@ -1,0 +1,139 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  //output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+// ENUMS
+enum UserRole {
+  CLIENTE
+  ESPECIALISTA
+  ADMIN
+}
+
+enum AppointmentStatus {
+  RESERVADA
+  PENDIENTE_VERIFICACION
+  AGENDADA
+  CANCELADA
+  COMPLETADA
+  NO_ASISTIO
+}
+
+enum PatientGender {
+  MASCULINO
+  FEMENINO
+  OTRO
+}
+
+// MODELS
+model User {
+  id            String     @id @default(uuid())
+  email         String     @unique
+  password_hash String
+  full_name     String
+  phone_number  String     @unique
+  role          UserRole
+  is_active     Boolean    @default(true)
+  created_at    DateTime   @default(now())
+  updated_at    DateTime   @updatedAt
+
+  // Relations
+  representative_for Patient[]
+  specialist_profile Specialist?
+  appointments_as_specialist Appointment[] @relation("SpecialistAppointments")
+  payments_verified Payment[]
+}
+
+model Patient {
+  id                String    @id @default(uuid())
+  representative_id String
+  full_name         String
+  age               Int
+  gender            PatientGender?
+  condition         String?
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+
+  // Relations
+  representative User          @relation(fields: [representative_id], references: [id], onDelete: Cascade)
+  appointments   Appointment[]
+}
+
+model Specialty {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+
+  // Relations
+  specialists Specialist[]
+}
+
+model Specialist {
+  user_id      String  @id
+  specialty_id String?
+  title        String?
+  created_at   DateTime @default(now())
+
+  // Relations
+  user      User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  specialty Specialty? @relation(fields: [specialty_id], references: [id], onDelete: SetNull)
+}
+
+model Availability {
+  id            String    @id @default(uuid())
+  specialist_id String
+  start_time    DateTime
+  end_time      DateTime
+  is_booked     Boolean   @default(false)
+  created_at    DateTime  @default(now())
+
+  // Relations
+  appointment Appointment?
+
+  @@unique([specialist_id, start_time])
+}
+
+model Appointment {
+  id              String            @id @default(uuid())
+  patient_id      String
+  specialist_id   String
+  availability_id String?           @unique
+  status          AppointmentStatus @default(RESERVADA)
+  notes           String?
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+
+  // Relations
+  patient      Patient      @relation(fields: [patient_id], references: [id])
+  specialist   User         @relation("SpecialistAppointments", fields: [specialist_id], references: [id])
+  availability Availability?  @relation(fields: [availability_id], references: [id])
+  payment      Payment[]
+}
+
+model Payment {
+  id             String   @id @default(uuid())
+  appointment_id String
+  boucher_url    String
+  status         String   @default("PENDIENTE_VERIFICACION")
+  verified_by_id String?
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  // Relations
+  appointment Appointment @relation(fields: [appointment_id], references: [id])
+  verified_by User?       @relation(fields: [verified_by_id], references: [id])
+}

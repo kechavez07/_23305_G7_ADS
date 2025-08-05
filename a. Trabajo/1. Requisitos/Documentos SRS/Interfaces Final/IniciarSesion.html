@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Clínica Médica</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            padding: 2.5rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .brand-logo {
+            width: 120px;
+            margin-bottom: 2rem;
+        }
+        
+        .form-control-custom {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control-custom:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
+        }
+        
+        .btn-login {
+            background: #3498db;
+            color: white;
+            padding: 12px 0;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-login:hover {
+            background: #2980b9;
+            color: white;
+        }
+        
+        .link-register {
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .link-register:hover {
+            color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-container">
+            <div class="text-center mb-4">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRByXdlFL7j91LhNlOH684Rj3oPVBLUuGbJA&s" alt="Logo Clínica" class="brand-logo">
+                <h2 class="mb-3">Bienvenido de nuevo</h2>
+                <p class="text-muted">Ingresa tus credenciales para acceder al sistema</p>
+            </div>
+
+            <form id="loginForm">
+                <!-- Mensajes de error -->
+                <div id="emailError" class="alert alert-danger d-none" role="alert"></div>
+                <div id="passwordError" class="alert alert-danger d-none" role="alert"></div>
+
+                <!-- Campos del formulario -->
+                <div class="mb-4">
+                    <label for="email" class="form-label">Correo electrónico</label>
+                    <input type="email" class="form-control form-control-custom" id="email" 
+                           placeholder="nombre@ejemplo.com" required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <input type="password" class="form-control form-control-custom" 
+                           id="password" placeholder="Ingresa tu contraseña" required>
+                </div>
+
+                <div class="d-grid mb-3">
+                    <button type="submit" class="btn btn-login">Iniciar Sesión</button>
+                </div>
+
+                <div class="text-center">
+                    <span class="text-muted">¿No tienes cuenta? </span>
+                    <a href="registro.html" class="link-register">Regístrate aquí</a>
+                </div>
+            </form>
+
+            <!-- Mensaje de éxito -->
+            <div id="successMessage" class="alert alert-success mt-4 d-none" role="alert">
+                ¡Inicio de sesión exitoso! Redirigiendo al sistema...
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS + Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const successMessage = document.getElementById('successMessage');
+
+        // Simulación de usuarios registrados (para demo)
+        const registeredUsers = [
+            { email: 'usuario@ejemplo.com', password: 'ClaveSegura123!' }
+        ];
+        
+        document.getElementById('email').addEventListener('input', () => validarCampos());
+document.getElementById('password').addEventListener('input', () => validarCampos());
+
+function validarCampos() {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+
+    // Limpiar mensajes de error previos
+    emailError.classList.add('d-none');
+    passwordError.classList.add('d-none');
+
+    // Validación en tiempo real de campos vacíos
+    if (!email) {
+        emailError.textContent = 'El campo de correo electrónico es obligatorio';
+        emailError.classList.remove('d-none');
+    }
+
+    if (!password) {
+        passwordError.textContent = 'El campo de contraseña es obligatorio';
+        passwordError.classList.remove('d-none');
+    }
+}
+
+        loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    // Resetear mensajes de error
+    emailError.classList.add('d-none');
+    passwordError.classList.add('d-none');
+    
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+    validarCampos(); // Asegurar que se validen los campos antes de enviar
+
+    
+    let isValid = true;
+
+    // Validar si los campos están vacíos
+    if (!email) {
+        emailError.textContent = 'El campo de correo electrónico es obligatorio';
+        emailError.classList.remove('d-none');
+        isValid = false;
+    }
+
+    if (!password) {
+        passwordError.textContent = 'El campo de contraseña es obligatorio';
+        passwordError.classList.remove('d-none');
+        isValid = false;
+    }
+
+    if (!isValid) return; // Detener la ejecución si hay campos vacíos
+
+    // Validar formato de email
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        emailError.textContent = 'Por favor ingresa un correo electrónico válido';
+        emailError.classList.remove('d-none');
+        isValid = false;
+    }
+    
+    // Validar existencia del email
+    const userExists = registeredUsers.some(user => user.email === email);
+    if (!userExists) {
+        emailError.textContent = 'El correo no está registrado.';
+        emailError.classList.remove('d-none');
+        isValid = false;
+    }
+    
+    // Validar contraseña
+    if (userExists) {
+        const user = registeredUsers.find(user => user.email === email);
+        if (user.password !== password) {
+            passwordError.textContent = 'La contraseña es incorrecta';
+            passwordError.classList.remove('d-none');
+            isValid = false;
+        }
+    }
+    
+    if (isValid) {
+        loginForm.classList.add('d-none');
+        successMessage.classList.remove('d-none');
+        
+        // Redirección simulada
+        setTimeout(() => {
+            window.location.href = 'AgendarCitaCliente.html';
+        }, 2000);
+    }
+});
+    </script>
+</body>
+</html>
