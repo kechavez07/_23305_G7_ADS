@@ -1,0 +1,59 @@
+button {
+  cursor: pointer;
+
+  &[disabled] {
+    cursor: default;
+  }
+}
+
+a,
+button {
+  transition: background-color 300ms ease-in-out;
+}
+
+input[type='search']::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.table-x-scroll {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.table {
+  width: 100%;
+
+  th {
+    text-align: start;
+  }
+
+  .column-center {
+    text-align: center;
+  }
+
+  td,
+  th {
+    padding: 8px 12px;
+  }
+
+  tbody tr {
+    border-top: 1px solid #d1d5dc;
+    border-bottom: 1px solid #d1d5dc;
+  }
+
+  tbody tr:nth-child(odd) {
+    background-color: #f3f4f6;
+  }
+
+  td[colspan]:not([colspan='1']) {
+    text-align: center;
+  }
+}
+
+main {
+  overflow-x: hidden;
+}
+
+.fc .fc-day-today {
+  background-color: transparent !important;
+}

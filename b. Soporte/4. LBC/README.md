@@ -19,7 +19,8 @@
 
 | Código del ECS | Descripción del ECS | Número de versión o variante | Fecha de creación | Autor o autores | Localización | Observación | Variante de requisitos de usuario | Variante de plataforma |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `CFF` | Código Fuente Frontend | V0.0 | 2025-08-05 | Alexander | \\SKIPUR\\Trabajo\\Implementacion\\ | Versión inicial del código fuente del frontend. | N/A | N/A |
+| `CFF` | Código Fuente Frontend | V1.0 | 2025-08-05 | Alexander | \\SKIPUR\\Trabajo\\Implementacion\\ | Versión inicial del código fuente del frontend. | N/A | N/A |
+| `CFF` | Código Fuente Frontend | V2.0 | 2025-08-05 | Alexander | \\SKIPUR\\Trabajo\\Implementacion\\ | Versión actualizada del código, con nuevas funcionalidades implementadas. | N/A | N/A |
 
 
 ---

@@ -1,0 +1,8 @@
+export const APPOINTMENT_STATUS = [
+  'RESERVADA',
+  'PENDIENTE_VERIFICACION',
+  'AGENDADA',
+  'CANCELADA',
+  'COMPLETADA',
+  'NO_ASISTIO',
+] as const
