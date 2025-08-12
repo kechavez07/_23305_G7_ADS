@@ -20,6 +20,7 @@
 | Código del ECS | Descripción del ECS | Número de versión o variante | Fecha de creación | Autor o autores | Localización | Observación | Variante de requisitos de usuario | Variante de plataforma |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | `DVP` | Perfil de Proyecto | V3.0 | 2025-08-05 | Kleber | \\SKIPUR\\Trabajo\\GestionProyecto\\ | Tercera versión del perfil del proyecto. | N/A | N/A |
+| `DVP` | Perfil de Proyecto | V4.0 | 2025-08-11 | Kleber | \\SKIPUR\\Trabajo\\GestionProyecto\\ | Cuarta versión del perfil del proyecto. | N/A | N/A |
 
 
 
